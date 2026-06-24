@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampusFlow Test QR Codes</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #F7F7F3;
+            color: #111111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+        }
+        h1 {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+        }
+        .container {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .card {
+            background-color: white;
+            border: 1px solid #E6E6E1;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            width: 250px;
+        }
+        .card img {
+            width: 200px;
+            height: 200px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .name {
+            font-size: 18px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+        .roll {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <h1>CampusFlow Field Test QRs</h1>
+    <div class="container">
+        <!-- Student 001 -->
+        <div class="card">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=ebfcaa9c-9fe7-48e7-a725-b8a3c954e03f" alt="QR Code">
+            <div class="name">Test Student 001</div>
+            <div class="roll">Grade 7A</div>
+        </div>
+
+        <!-- Student 002 -->
+        <div class="card">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=e3b59cf6-58e2-4a3c-a9f2-e9016c614d95" alt="QR Code">
+            <div class="name">Test Student 002</div>
+            <div class="roll">Grade 7A</div>
+        </div>
+
+        <!-- Student 003 -->
+        <div class="card">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=41b2cb54-8792-445c-9e91-adc4b6543706" alt="QR Code">
+            <div class="name">Test Student 003</div>
+            <div class="roll">Grade 7A</div>
+        </div>
+    </div>
+</body>
+</html>

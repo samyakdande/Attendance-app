@@ -1,0 +1,318 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model Institution {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  type      String?
+  status    String   @default("active")
+  settings  Json?    @default("{}")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  profiles           Profile[]
+  students           Student[]
+  classes            Class[]
+  attendanceSessions AttendanceSession[]
+  auditLogs          AuditLog[]
+  academicYears      AcademicYear[]
+  parents            Parent[]
+  notifications      Notification[]
+
+  @@map("institutions")
+}
+
+model Profile {
+  id            String   @id @db.Uuid // Matches Supabase Auth User ID
+  institutionId String   @map("institution_id") @db.Uuid
+  role          String   // 'admin', 'teacher'
+  firstName     String   @map("first_name")
+  lastName      String   @map("last_name")
+  email         String   @unique
+  phone         String?  @map("phone")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  teacher       Teacher?
+  parent        Parent?
+  devices       Device[]
+  notificationPreferences NotificationPreference[]
+  notifications Notification[]
+  requestedCorrections AttendanceCorrection[] @relation("CorrectionRequestedBy")
+  approvedCorrections  AttendanceCorrection[] @relation("CorrectionApprovedBy")
+
+  @@map("profiles")
+}
+
+model Teacher {
+  id            String   @id @default(uuid()) @db.Uuid
+  profileId     String   @unique @map("profile_id") @db.Uuid
+  department    String?
+  status        String   @default("active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  profile       Profile  @relation(fields: [profileId], references: [id])
+  classes       Class[]
+  sessions      AttendanceSession[]
+
+  @@map("teachers")
+}
+
+model Device {
+  id            String   @id @default(uuid()) @db.Uuid
+  profileId     String   @map("profile_id") @db.Uuid
+  deviceId      String   @map("device_id") // Hardware UUID / Expo Device ID
+  deviceModel   String?  @map("device_model")
+  osVersion     String?  @map("os_version")
+  fcmToken      String?  @map("fcm_token") // Push notifications
+  lastActiveAt  DateTime @default(now()) @map("last_active_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  profile       Profile  @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, deviceId])
+  @@map("devices")
+}
+
+model Student {
+  id               String   @id @default(uuid()) @db.Uuid
+  institutionId    String   @map("institution_id") @db.Uuid
+  firstName        String   @map("first_name")
+  lastName         String   @map("last_name")
+  enrollmentNumber String   @map("enrollment_number")
+  email            String?  @map("email")
+  phone            String?  @map("phone")
+  qrIdentifier     String   @unique @default(uuid()) @map("qr_identifier") @db.Uuid
+  
+  // Hardening Phase 8.1 Additions
+  status           String   @default("active") // 'active', 'inactive', 'graduated', 'suspended'
+  qrStatus         String   @default("active") @map("qr_status") // 'active', 'revoked', 'expired'
+  qrVersion        Int      @default(1) @map("qr_version")
+  lastQrGeneratedAt DateTime? @map("last_qr_generated_at")
+
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  deletedAt        DateTime? @map("deleted_at")
+
+  institution      Institution @relation(fields: [institutionId], references: [id])
+  classes          ClassStudent[]
+  attendance       AttendanceRecord[]
+  parents          ParentStudent[]
+
+  @@unique([institutionId, enrollmentNumber])
+  @@index([qrIdentifier])
+  @@map("students")
+}
+
+model Parent {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  profileId     String   @unique @map("profile_id") @db.Uuid
+  status        String   @default("active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  profile       Profile     @relation(fields: [profileId], references: [id])
+  students      ParentStudent[]
+
+  @@map("parents")
+}
+
+model ParentStudent {
+  parentId  String @map("parent_id") @db.Uuid
+  studentId String @map("student_id") @db.Uuid
+  relation  String // 'father', 'mother', 'guardian'
+  createdAt DateTime @default(now()) @map("created_at")
+
+  parent    Parent  @relation(fields: [parentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@id([parentId, studentId])
+  @@map("parent_students")
+}
+
+model AcademicYear {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  name          String   // e.g., "2026-2027"
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  status        String   @default("active") // 'active', 'archived'
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  classes       Class[]
+  sessions      AttendanceSession[]
+
+  @@unique([institutionId, name])
+  @@map("academic_years")
+}
+
+model Class {
+  id             String   @id @default(uuid()) @db.Uuid
+  institutionId  String   @map("institution_id") @db.Uuid
+  academicYearId String?  @map("academic_year_id") @db.Uuid // Updated in Phase 8.1
+  academicYear   String   @map("academic_year") // Legacy field, kept for transition
+  name           String
+  teacherId      String?  @map("teacher_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  institution    Institution @relation(fields: [institutionId], references: [id])
+  academicYearRef AcademicYear? @relation(fields: [academicYearId], references: [id])
+  teacher        Teacher?    @relation(fields: [teacherId], references: [id])
+  students       ClassStudent[]
+  sessions       AttendanceSession[]
+
+  @@map("classes")
+}
+
+model ClassStudent {
+  classId   String @map("class_id") @db.Uuid
+  studentId String @map("student_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  class     Class   @relation(fields: [classId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+
+  @@id([classId, studentId])
+  @@map("class_students")
+}
+
+model AttendanceSession {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  academicYearId String? @map("academic_year_id") @db.Uuid // Phase 8.1 Add
+  classId       String   @map("class_id") @db.Uuid
+  teacherId     String   @map("teacher_id") @db.Uuid
+  startTime     DateTime @default(now()) @map("start_time")
+  endTime       DateTime? @map("end_time")
+  status        String   @default("active") // 'active', 'closed'
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  deletedAt     DateTime? @map("deleted_at")
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  academicYear  AcademicYear? @relation(fields: [academicYearId], references: [id])
+  class         Class       @relation(fields: [classId], references: [id])
+  teacher       Teacher     @relation(fields: [teacherId], references: [id])
+  records       AttendanceRecord[]
+
+  @@index([classId, status])
+  @@map("attendance_sessions")
+}
+
+model AttendanceRecord {
+  id            String   @id @default(uuid()) @db.Uuid
+  sessionId     String   @map("session_id") @db.Uuid
+  studentId     String   @map("student_id") @db.Uuid
+  status        String   // 'present', 'absent', 'late', 'excused'
+  scannedAt     DateTime? @map("scanned_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  session       AttendanceSession @relation(fields: [sessionId], references: [id])
+  student       Student           @relation(fields: [studentId], references: [id])
+  correction    AttendanceCorrection?
+
+  @@unique([sessionId, studentId]) // Prevent double scanning per session
+  @@map("attendance_records")
+}
+
+model AttendanceCorrection {
+  id               String   @id @default(uuid()) @db.Uuid
+  attendanceRecordId String @unique @map("attendance_record_id") @db.Uuid
+  requestedById    String   @map("requested_by_id") @db.Uuid // Teacher Profile ID
+  approvedById     String?  @map("approved_by_id") @db.Uuid // Admin Profile ID
+  oldStatus        String   @map("old_status")
+  newStatus        String   @map("new_status")
+  reason           String
+  adminNote        String?  @map("admin_note")
+  status           String   @default("pending") // 'pending', 'approved', 'rejected', 'expired'
+  createdAt        DateTime @default(now()) @map("created_at")
+  resolvedAt       DateTime? @map("resolved_at")
+
+  attendanceRecord AttendanceRecord @relation(fields: [attendanceRecordId], references: [id])
+  requestedBy      Profile          @relation("CorrectionRequestedBy", fields: [requestedById], references: [id])
+  approvedBy       Profile?         @relation("CorrectionApprovedBy", fields: [approvedById], references: [id])
+
+  @@map("attendance_corrections")
+}
+
+model Notification {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid // Profile ID
+  title         String
+  message       String
+  type          String   // 'alert', 'attendance', 'system'
+  entityId      String?  @map("entity_id") // Optional reference to the underlying entity (e.g. correction ID)
+  entityType    String?  @map("entity_type") // e.g. 'attendance_correction'
+  isRead        Boolean  @default(false) @map("is_read")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  user          Profile     @relation(fields: [userId], references: [id])
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  actorId       String   @map("actor_id") @db.Uuid // Usually a Profile ID
+  action        String
+  entityType    String   @map("entity_type")
+  entityId      String   @map("entity_id")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  institution   Institution @relation(fields: [institutionId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model NotificationPreference {
+  id            String   @id @default(uuid()) @db.Uuid
+  profileId     String   @map("profile_id") @db.Uuid
+  type          String   // e.g. 'ATTENDANCE_CORRECTION_APPROVED', 'SYSTEM_ALERT'
+  email         Boolean  @default(true)
+  push          Boolean  @default(true)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  profile       Profile  @relation(fields: [profileId], references: [id])
+
+  @@unique([profileId, type])
+  @@map("notification_preferences")
+}
+
+model SystemMetric {
+  id            String   @id @default(uuid()) @db.Uuid
+  institutionId String   @map("institution_id") @db.Uuid
+  date          DateTime @db.Date // YYYY-MM-DD
+  metricName    String   @map("metric_name") // e.g., 'total_sessions', 'total_scans', 'offline_syncs'
+  metricValue   Int      @map("metric_value")
+  metadata      Json?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@unique([institutionId, date, metricName])
+  @@index([institutionId, metricName, date])
+  @@map("system_metrics")
+}
