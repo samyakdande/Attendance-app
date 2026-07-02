@@ -24,21 +24,7 @@ export declare class StudentsController {
         deletedAt: Date | null;
         institutionId: string;
     }>;
-    findAll(user: any): Promise<{
-        id: string;
-        firstName: string;
-        lastName: string;
-        enrollmentNumber: string;
-        status: string;
-        qrStatus: string;
-        qrVersion: number;
-        lastQrGeneratedAt: Date | null;
-        scanCount: number;
-        lastScannedAt: Date;
-        className: string;
-        attendancePercentage: number;
-        qrIdentifier: string;
-    }[]>;
+    findAll(user: any, page?: number, limit?: number, search?: string): Promise<import("../common/interfaces/pagination.interface").PaginatedResult<any>>;
     exportQrData(user: any): Promise<{
         qrPayload: string;
         id: string;

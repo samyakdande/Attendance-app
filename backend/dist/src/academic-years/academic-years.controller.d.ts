@@ -4,19 +4,19 @@ export declare class AcademicYearsController {
     constructor(academicYearsService: AcademicYearsService);
     create(user: any, data: any): Promise<{
         id: string;
-        name: string;
         status: string;
         createdAt: Date;
         institutionId: string;
+        name: string;
         startDate: Date;
         endDate: Date;
     }>;
     findAll(user: any): Promise<{
         id: string;
-        name: string;
         status: string;
         createdAt: Date;
         institutionId: string;
+        name: string;
         startDate: Date;
         endDate: Date;
     }[]>;

@@ -12,25 +12,21 @@ export declare class AttendanceCorrectionsService {
         reason: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
         status: string;
+        createdAt: Date;
+        attendanceRecordId: string;
+        requestedById: string;
+        approvedById: string | null;
         oldStatus: string;
         newStatus: string;
         reason: string;
         adminNote: string | null;
         resolvedAt: Date | null;
-        attendanceRecordId: string;
-        requestedById: string;
-        approvedById: string | null;
     }>;
     getInbox(institutionId: string): Promise<({
         attendanceRecord: {
             student: {
                 id: string;
-                institutionId: string;
-                createdAt: Date;
-                updatedAt: Date;
-                deletedAt: Date | null;
                 firstName: string;
                 lastName: string;
                 enrollmentNumber: string;
@@ -41,77 +37,81 @@ export declare class AttendanceCorrectionsService {
                 qrStatus: string;
                 qrVersion: number;
                 lastQrGeneratedAt: Date | null;
+                createdAt: Date;
+                updatedAt: Date;
+                deletedAt: Date | null;
+                institutionId: string;
             };
             session: {
                 class: {
                     id: string;
-                    institutionId: string;
-                    academicYearId: string | null;
-                    academicYear: string;
-                    name: string;
-                    teacherId: string | null;
                     createdAt: Date;
                     updatedAt: Date;
                     deletedAt: Date | null;
+                    institutionId: string;
+                    name: string;
+                    academicYearId: string | null;
+                    academicYear: string;
+                    teacherId: string | null;
                 };
             } & {
                 id: string;
-                institutionId: string;
-                academicYearId: string | null;
-                teacherId: string;
+                status: string;
                 createdAt: Date;
                 updatedAt: Date;
                 deletedAt: Date | null;
+                institutionId: string;
                 classId: string;
-                status: string;
+                academicYearId: string | null;
+                teacherId: string;
                 startTime: Date;
                 endTime: Date | null;
             };
         } & {
             id: string;
+            status: string;
             createdAt: Date;
             updatedAt: Date;
-            studentId: string;
-            status: string;
             scannedAt: Date | null;
+            studentId: string;
             sessionId: string;
         };
         requestedBy: {
             id: string;
-            institutionId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
             role: string;
         };
         approvedBy: {
             id: string;
-            institutionId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
             role: string;
         } | null;
     } & {
         id: string;
-        createdAt: Date;
         status: string;
+        createdAt: Date;
+        attendanceRecordId: string;
+        requestedById: string;
+        approvedById: string | null;
         oldStatus: string;
         newStatus: string;
         reason: string;
         adminNote: string | null;
         resolvedAt: Date | null;
-        attendanceRecordId: string;
-        requestedById: string;
-        approvedById: string | null;
     })[]>;
     resolveCorrection(institutionId: string, approvedById: string, id: string, data: {
         status: 'approved' | 'rejected' | 'expired';
@@ -119,39 +119,39 @@ export declare class AttendanceCorrectionsService {
     }): Promise<{
         requestedBy: {
             id: string;
-            institutionId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
             role: string;
         };
         approvedBy: {
             id: string;
-            institutionId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
             role: string;
         } | null;
     } & {
         id: string;
-        createdAt: Date;
         status: string;
+        createdAt: Date;
+        attendanceRecordId: string;
+        requestedById: string;
+        approvedById: string | null;
         oldStatus: string;
         newStatus: string;
         reason: string;
         adminNote: string | null;
         resolvedAt: Date | null;
-        attendanceRecordId: string;
-        requestedById: string;
-        approvedById: string | null;
     }>;
 }

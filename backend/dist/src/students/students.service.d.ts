@@ -1,4 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, PaginatedResult } from '../common/interfaces/pagination.interface';
 export declare class StudentsService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -24,21 +25,11 @@ export declare class StudentsService {
         deletedAt: Date | null;
         institutionId: string;
     }>;
-    findAll(institutionId: string, user?: any): Promise<{
-        id: string;
-        firstName: string;
-        lastName: string;
-        enrollmentNumber: string;
-        status: string;
-        qrStatus: string;
-        qrVersion: number;
-        lastQrGeneratedAt: Date | null;
-        scanCount: number;
-        lastScannedAt: Date;
-        className: string;
-        attendancePercentage: number;
-        qrIdentifier: string;
-    }[]>;
+    findAll(institutionId: string, user?: any, params?: PaginationParams & {
+        status?: string;
+        classId?: string;
+        qrStatus?: string;
+    }): Promise<PaginatedResult<any>>;
     findOne(institutionId: string, id: string, user?: any): Promise<{
         student: {
             id: string;

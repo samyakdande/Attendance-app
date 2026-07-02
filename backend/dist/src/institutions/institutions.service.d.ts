@@ -8,31 +8,31 @@ export declare class InstitutionsService {
         settings?: any;
     }): Promise<{
         id: string;
-        name: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        status: string;
+        name: string;
         type: string | null;
         settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     findAll(): Promise<{
         id: string;
-        name: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        status: string;
+        name: string;
         type: string | null;
         settings: import("@prisma/client/runtime/client").JsonValue | null;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
-        name: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        status: string;
+        name: string;
         type: string | null;
         settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
@@ -43,21 +43,21 @@ export declare class InstitutionsService {
         settings?: any;
     }): Promise<{
         id: string;
-        name: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        status: string;
+        name: string;
         type: string | null;
         settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     remove(id: string): Promise<{
         id: string;
-        name: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
-        status: string;
+        name: string;
         type: string | null;
         settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;

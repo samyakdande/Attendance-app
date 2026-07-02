@@ -12,14 +12,14 @@ export declare class AttendanceService {
     constructor(prisma: PrismaService, redis: RedisService, auditLogs: AuditLogsService, notifications: NotificationsService, metrics: MetricsService);
     startSession(institutionId: string, profileId: string, classId: string): Promise<{
         id: string;
-        institutionId: string;
-        academicYearId: string | null;
-        teacherId: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        institutionId: string;
         classId: string;
-        status: string;
+        academicYearId: string | null;
+        teacherId: string;
         startTime: Date;
         endTime: Date | null;
     }>;
@@ -58,14 +58,14 @@ export declare class AttendanceService {
     }>;
     closeSession(institutionId: string, sessionId: string): Promise<{
         id: string;
-        institutionId: string;
-        academicYearId: string | null;
-        teacherId: string;
+        status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        institutionId: string;
         classId: string;
-        status: string;
+        academicYearId: string | null;
+        teacherId: string;
         startTime: Date;
         endTime: Date | null;
     }>;

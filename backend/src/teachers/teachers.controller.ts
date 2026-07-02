@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
 import { SupabaseAuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -21,8 +21,15 @@ export class TeachersController {
 
   @Get()
   @Roles('admin')
-  findAll(@CurrentUser() user: any) {
-    return this.teachersService.findAll(user.institutionId);
+  findAll(
+    @CurrentUser() user: any,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('search') search?: string,
+    @Query('department') department?: string,
+    @Query('status') status?: string
+  ) {
+    return this.teachersService.findAll(user.institutionId, { page, limit, search, department, status });
   }
 
   @Get('dashboard-stats')

@@ -105,8 +105,14 @@ export class ReportsService {
 
     if (!student) throw new NotFoundException('Student not found');
 
-    const totalClasses = student.attendance.length;
-    const presentCount = student.attendance.filter((r: any) => r.status === 'present').length;
+    const aggregation = await this.prisma.attendanceRecord.groupBy({
+      by: ['status'],
+      where: { studentId },
+      _count: { status: true },
+    });
+
+    const presentCount = aggregation.find(a => a.status === 'present')?._count.status || 0;
+    const totalClasses = aggregation.reduce((acc, curr) => acc + curr._count.status, 0);
 
     return {
       studentId: student.id,

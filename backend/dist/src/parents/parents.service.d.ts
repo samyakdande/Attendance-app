@@ -3,13 +3,21 @@ export declare class ParentsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     findAll(institutionId: string): Promise<({
+        profile: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            email: string;
+            phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
+            role: string;
+        };
         students: ({
             student: {
                 id: string;
-                institutionId: string;
-                createdAt: Date;
-                updatedAt: Date;
-                deletedAt: Date | null;
                 firstName: string;
                 lastName: string;
                 enrollmentNumber: string;
@@ -20,6 +28,10 @@ export declare class ParentsService {
                 qrStatus: string;
                 qrVersion: number;
                 lastQrGeneratedAt: Date | null;
+                createdAt: Date;
+                updatedAt: Date;
+                deletedAt: Date | null;
+                institutionId: string;
             };
         } & {
             createdAt: Date;
@@ -27,23 +39,11 @@ export declare class ParentsService {
             parentId: string;
             relation: string;
         })[];
-        profile: {
-            id: string;
-            institutionId: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phone: string | null;
-            role: string;
-        };
     } & {
         id: string;
-        institutionId: string;
-        createdAt: Date;
         status: string;
+        createdAt: Date;
+        institutionId: string;
         profileId: string;
     })[]>;
 }

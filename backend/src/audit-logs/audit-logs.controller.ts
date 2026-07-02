@@ -14,12 +14,16 @@ export class AuditLogsController {
   @Roles('admin')
   findAll(
     @CurrentUser() user: any,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
     @Query('entityType') entityType?: string,
     @Query('action') action?: string,
     @Query('days') days?: string,
     @Query('search') search?: string
   ) {
     return this.auditLogsService.findAll(user.institutionId, {
+      page,
+      limit,
       entityType,
       action,
       days: days ? parseInt(days, 10) : undefined,

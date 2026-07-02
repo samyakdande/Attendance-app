@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, getPaginationOptions, PaginatedResult } from '../common/interfaces/pagination.interface';
 
 @Injectable()
 export class TeachersService {
@@ -50,23 +51,68 @@ export class TeachersService {
     });
   }
 
-  async findAll(institutionId: string) {
-    return this.prisma.teacher.findMany({
-      where: {
-        profile: { institutionId },
-        deletedAt: null,
-      },
-      include: {
-        profile: true,
-        classes: {
-          include: {
-            _count: {
-              select: { students: true }
-            }
+  async findAll(institutionId: string, params?: PaginationParams & { department?: string, status?: string }): Promise<PaginatedResult<any>> {
+    const { page, limit, skip } = getPaginationOptions(params || {});
+
+    let whereClause: any = {
+      profile: { institutionId },
+      deletedAt: null,
+    };
+
+    if (params?.department) whereClause.department = params.department;
+    if (params?.status) whereClause.status = params.status;
+
+    if (params?.search) {
+      whereClause.profile = {
+        ...whereClause.profile,
+        OR: [
+          { firstName: { contains: params.search, mode: 'insensitive' } },
+          { lastName: { contains: params.search, mode: 'insensitive' } },
+          { email: { contains: params.search, mode: 'insensitive' } }
+        ]
+      };
+    }
+
+    const [total, teachers] = await this.prisma.$transaction([
+      this.prisma.teacher.count({ where: whereClause }),
+      this.prisma.teacher.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        include: {
+          profile: true,
+          _count: {
+            select: { classes: true }
           }
         },
-      },
-    });
+        orderBy: {
+          profile: { lastName: 'asc' }
+        }
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    const data = teachers.map(t => ({
+      id: t.id,
+      name: `${t.profile.firstName} ${t.profile.lastName}`,
+      email: t.profile.email,
+      department: t.department || 'Unassigned',
+      status: t.status,
+      assignedClasses: t._count.classes
+    }));
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrevious: page > 1
+      }
+    };
   }
 
   async findOne(institutionId: string, id: string) {

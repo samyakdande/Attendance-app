@@ -8,33 +8,33 @@ export declare class InstitutionsController {
         settings?: any;
     }): Promise<{
         id: string;
-        name: string;
-        type: string | null;
         status: string;
-        settings: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        name: string;
+        type: string | null;
+        settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     findAll(): Promise<{
         id: string;
-        name: string;
-        type: string | null;
         status: string;
-        settings: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        name: string;
+        type: string | null;
+        settings: import("@prisma/client/runtime/client").JsonValue | null;
     }[]>;
     findOne(id: string): Promise<{
         id: string;
-        name: string;
-        type: string | null;
         status: string;
-        settings: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        name: string;
+        type: string | null;
+        settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     update(id: string, updateInstitutionDto: {
         name?: string;
@@ -43,22 +43,22 @@ export declare class InstitutionsController {
         settings?: any;
     }): Promise<{
         id: string;
-        name: string;
-        type: string | null;
         status: string;
-        settings: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        name: string;
+        type: string | null;
+        settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
     remove(id: string): Promise<{
         id: string;
-        name: string;
-        type: string | null;
         status: string;
-        settings: import("@prisma/client/runtime/client").JsonValue | null;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
+        name: string;
+        type: string | null;
+        settings: import("@prisma/client/runtime/client").JsonValue | null;
     }>;
 }

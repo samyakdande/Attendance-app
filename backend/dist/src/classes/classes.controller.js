@@ -27,8 +27,8 @@ let ClassesController = class ClassesController {
     create(user, createClassDto) {
         return this.classesService.create(user.institutionId, createClassDto);
     }
-    findAll(user) {
-        return this.classesService.findAll(user.institutionId, user);
+    findAll(user, page, limit, search, academicYear) {
+        return this.classesService.findAll(user.institutionId, user, { page, limit, search, academicYear });
     }
     findOne(user, id) {
         return this.classesService.findOne(user.institutionId, id, user);
@@ -60,8 +60,12 @@ __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)('admin', 'teacher'),
     __param(0, (0, user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('search')),
+    __param(4, (0, common_1.Query)('academicYear')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Number, Number, String, String]),
     __metadata("design:returntype", void 0)
 ], ClassesController.prototype, "findAll", null);
 __decorate([

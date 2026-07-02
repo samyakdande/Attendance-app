@@ -12,12 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuditLogsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const pagination_interface_1 = require("../common/interfaces/pagination.interface");
 let AuditLogsService = class AuditLogsService {
     prisma;
     constructor(prisma) {
         this.prisma = prisma;
     }
     async findAll(institutionId, filters) {
+        const { page, limit, skip } = (0, pagination_interface_1.getPaginationOptions)(filters || {});
         const whereClause = { institutionId };
         if (filters?.entityType) {
             whereClause.entityType = filters.entityType;
@@ -36,11 +38,27 @@ let AuditLogsService = class AuditLogsService {
                 { entityType: { contains: filters.search, mode: 'insensitive' } }
             ];
         }
-        return this.prisma.auditLog.findMany({
-            where: whereClause,
-            orderBy: { createdAt: 'desc' },
-            take: 200,
-        });
+        const [total, data] = await this.prisma.$transaction([
+            this.prisma.auditLog.count({ where: whereClause }),
+            this.prisma.auditLog.findMany({
+                where: whereClause,
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take: limit,
+            })
+        ]);
+        const totalPages = Math.ceil(total / limit);
+        return {
+            data,
+            meta: {
+                total,
+                page,
+                limit,
+                totalPages,
+                hasNext: page < totalPages,
+                hasPrevious: page > 1
+            }
+        };
     }
     async createLog(data) {
         return this.prisma.auditLog.create({

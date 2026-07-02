@@ -27,8 +27,8 @@ let StudentsController = class StudentsController {
     create(user, createStudentDto) {
         return this.studentsService.create(user.institutionId, createStudentDto);
     }
-    findAll(user) {
-        return this.studentsService.findAll(user.institutionId, user);
+    findAll(user, page, limit, search) {
+        return this.studentsService.findAll(user.institutionId, user, { page, limit, search });
     }
     exportQrData(user) {
         return this.studentsService.exportQrData(user.institutionId);
@@ -60,8 +60,11 @@ __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)('admin', 'teacher'),
     __param(0, (0, user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Number, Number, String]),
     __metadata("design:returntype", void 0)
 ], StudentsController.prototype, "findAll", null);
 __decorate([

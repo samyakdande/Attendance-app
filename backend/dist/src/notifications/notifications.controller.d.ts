@@ -4,15 +4,15 @@ export declare class NotificationsController {
     constructor(notificationsService: NotificationsService);
     findAll(user: any, search?: string): Promise<{
         id: string;
-        type: string;
         createdAt: Date;
         institutionId: string;
-        userId: string;
+        entityType: string | null;
+        entityId: string | null;
+        type: string;
         title: string;
         message: string;
-        entityId: string | null;
-        entityType: string | null;
         isRead: boolean;
+        userId: string;
     }[]>;
     markAllAsRead(user: any): Promise<import("@prisma/client").Prisma.BatchPayload>;
     markAsRead(id: string, user: any): Promise<import("@prisma/client").Prisma.BatchPayload>;

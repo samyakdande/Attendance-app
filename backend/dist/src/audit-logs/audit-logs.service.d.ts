@@ -1,22 +1,14 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, PaginatedResult } from '../common/interfaces/pagination.interface';
 export declare class AuditLogsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
-    findAll(institutionId: string, filters?: {
+    findAll(institutionId: string, filters?: PaginationParams & {
         entityType?: string;
         action?: string;
         days?: number;
         search?: string;
-    }): Promise<{
-        id: string;
-        institutionId: string;
-        createdAt: Date;
-        actorId: string;
-        action: string;
-        entityType: string;
-        entityId: string;
-        metadata: import("@prisma/client/runtime/client").JsonValue | null;
-    }[]>;
+    }): Promise<PaginatedResult<any>>;
     createLog(data: {
         institutionId: string;
         actorId: string;
@@ -26,8 +18,8 @@ export declare class AuditLogsService {
         metadata?: any;
     }): Promise<{
         id: string;
-        institutionId: string;
         createdAt: Date;
+        institutionId: string;
         actorId: string;
         action: string;
         entityType: string;

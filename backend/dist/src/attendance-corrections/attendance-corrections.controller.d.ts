@@ -23,31 +23,31 @@ export declare class AttendanceCorrectionsController {
         attendanceRecord: {
             student: {
                 id: string;
-                status: string;
-                createdAt: Date;
-                updatedAt: Date;
-                deletedAt: Date | null;
                 firstName: string;
                 lastName: string;
+                enrollmentNumber: string;
                 email: string | null;
                 phone: string | null;
-                institutionId: string;
-                enrollmentNumber: string;
                 qrIdentifier: string;
+                status: string;
                 qrStatus: string;
                 qrVersion: number;
                 lastQrGeneratedAt: Date | null;
+                createdAt: Date;
+                updatedAt: Date;
+                deletedAt: Date | null;
+                institutionId: string;
             };
             session: {
                 class: {
                     id: string;
-                    name: string;
                     createdAt: Date;
                     updatedAt: Date;
                     deletedAt: Date | null;
-                    academicYear: string;
                     institutionId: string;
+                    name: string;
                     academicYearId: string | null;
+                    academicYear: string;
                     teacherId: string | null;
                 };
             } & {
@@ -57,9 +57,9 @@ export declare class AttendanceCorrectionsController {
                 updatedAt: Date;
                 deletedAt: Date | null;
                 institutionId: string;
+                classId: string;
                 academicYearId: string | null;
                 teacherId: string;
-                classId: string;
                 startTime: Date;
                 endTime: Date | null;
             };
@@ -69,32 +69,32 @@ export declare class AttendanceCorrectionsController {
             createdAt: Date;
             updatedAt: Date;
             scannedAt: Date | null;
-            sessionId: string;
             studentId: string;
+            sessionId: string;
         };
         requestedBy: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         };
         approvedBy: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         } | null;
     } & {
         id: string;
@@ -115,27 +115,27 @@ export declare class AttendanceCorrectionsController {
     }): Promise<{
         requestedBy: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         };
         approvedBy: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         } | null;
     } & {
         id: string;

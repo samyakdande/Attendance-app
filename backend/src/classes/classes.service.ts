@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, getPaginationOptions, PaginatedResult } from '../common/interfaces/pagination.interface';
 
 @Injectable()
 export class ClassesService {
@@ -16,31 +17,70 @@ export class ClassesService {
     });
   }
 
-  async findAll(institutionId: string, user?: any) {
+  async findAll(institutionId: string, user?: any, params?: PaginationParams & { academicYear?: string }): Promise<PaginatedResult<any>> {
+    const { page, limit, skip } = getPaginationOptions(params || {});
+    
     let whereClause: any = {
       institutionId,
       deletedAt: null,
     };
 
+    if (params?.academicYear) whereClause.academicYear = params.academicYear;
+
+    if (params?.search) {
+      whereClause.OR = [
+        { name: { contains: params.search, mode: 'insensitive' } },
+        { academicYear: { contains: params.search, mode: 'insensitive' } },
+      ];
+    }
+
     if (user?.role === 'teacher') {
       const teacher = await this.prisma.teacher.findUnique({
         where: { profileId: user.id }
       });
-      if (!teacher) return []; // If no teacher profile exists, they have no classes
+      if (!teacher) return { data: [], meta: { total: 0, page, limit, totalPages: 0, hasNext: false, hasPrevious: false } }; 
       whereClause.teacherId = teacher.id;
     }
 
-    return this.prisma.class.findMany({
-      where: whereClause,
-      include: {
-        teacher: {
-          include: { profile: true },
+    const [total, classes] = await this.prisma.$transaction([
+      this.prisma.class.count({ where: whereClause }),
+      this.prisma.class.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        include: {
+          teacher: {
+            include: { profile: { select: { firstName: true, lastName: true } } },
+          },
+          _count: {
+            select: { students: true },
+          },
         },
-        _count: {
-          select: { students: true },
-        },
-      },
-    });
+        orderBy: { name: 'asc' }
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    const data = classes.map(c => ({
+      id: c.id,
+      name: c.name,
+      academicYear: c.academicYear,
+      teacherName: c.teacher ? `${c.teacher.profile.firstName} ${c.teacher.profile.lastName}` : 'Unassigned',
+      studentCount: c._count.students,
+    }));
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrevious: page > 1
+      }
+    };
   }
 
   async findOne(institutionId: string, id: string, user?: any) {

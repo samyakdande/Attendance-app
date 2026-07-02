@@ -11,9 +11,9 @@ export declare class AttendanceController {
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        classId: string;
         academicYearId: string | null;
         teacherId: string;
-        classId: string;
         startTime: Date;
         endTime: Date | null;
     }>;
@@ -59,9 +59,9 @@ export declare class AttendanceController {
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        classId: string;
         academicYearId: string | null;
         teacherId: string;
-        classId: string;
         startTime: Date;
         endTime: Date | null;
     }>;

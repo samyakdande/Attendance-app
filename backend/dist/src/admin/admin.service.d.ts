@@ -1,7 +1,9 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { StorageService } from '../storage/storage.service';
 export declare class AdminService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private storageService;
+    constructor(prisma: PrismaService, storageService: StorageService);
     getDashboardStats(institutionId: string): Promise<{
         liveStats: {
             teachers: number;
@@ -15,4 +17,9 @@ export declare class AdminService {
             offlineSyncs: number;
         };
     }>;
+    generateQrExportPdf(institutionId: string, options: {
+        classId?: string;
+        section?: string;
+        selectedStudentIds?: string[];
+    }): Promise<string>;
 }

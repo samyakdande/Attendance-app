@@ -32,6 +32,10 @@ const attendance_corrections_module_1 = require("./attendance-corrections/attend
 const health_module_1 = require("./health/health.module");
 const metrics_module_1 = require("./metrics/metrics.module");
 const admin_module_1 = require("./admin/admin.module");
+const schedule_1 = require("@nestjs/schedule");
+const jobs_module_1 = require("./jobs/jobs.module");
+const storage_module_1 = require("./storage/storage.module");
+const monitoring_module_1 = require("./monitoring/monitoring.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -39,6 +43,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
+            schedule_1.ScheduleModule.forRoot(),
             throttler_1.ThrottlerModule.forRoot([{
                     ttl: 60000,
                     limit: 100,
@@ -60,6 +65,9 @@ exports.AppModule = AppModule = __decorate([
             health_module_1.HealthModule,
             metrics_module_1.MetricsModule,
             admin_module_1.AdminModule,
+            jobs_module_1.JobsModule,
+            storage_module_1.StorageModule,
+            monitoring_module_1.MonitoringModule,
         ],
         controllers: [app_controller_1.AppController, seed_controller_1.SeedController],
         providers: [

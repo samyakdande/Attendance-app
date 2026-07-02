@@ -15,4 +15,7 @@ export declare class AdminController {
             offlineSyncs: number;
         };
     }>;
+    exportQrPdf(user: any, classId?: string, section?: string, studentIds?: string): Promise<{
+        url: string;
+    }>;
 }

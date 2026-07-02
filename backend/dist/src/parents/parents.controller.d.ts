@@ -3,23 +3,35 @@ export declare class ParentsController {
     private readonly parentsService;
     constructor(parentsService: ParentsService);
     findAll(user: any): Promise<({
+        profile: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            email: string;
+            phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
+            role: string;
+        };
         students: ({
             student: {
                 id: string;
-                status: string;
-                createdAt: Date;
-                updatedAt: Date;
-                deletedAt: Date | null;
                 firstName: string;
                 lastName: string;
+                enrollmentNumber: string;
                 email: string | null;
                 phone: string | null;
-                institutionId: string;
-                enrollmentNumber: string;
                 qrIdentifier: string;
+                status: string;
                 qrStatus: string;
                 qrVersion: number;
                 lastQrGeneratedAt: Date | null;
+                createdAt: Date;
+                updatedAt: Date;
+                deletedAt: Date | null;
+                institutionId: string;
             };
         } & {
             createdAt: Date;
@@ -27,23 +39,11 @@ export declare class ParentsController {
             parentId: string;
             relation: string;
         })[];
-        profile: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phone: string | null;
-            institutionId: string;
-        };
     } & {
         id: string;
         status: string;
         createdAt: Date;
-        profileId: string;
         institutionId: string;
+        profileId: string;
     })[]>;
 }

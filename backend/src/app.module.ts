@@ -23,10 +23,15 @@ import { AttendanceCorrectionsModule } from './attendance-corrections/attendance
 import { HealthModule } from './health/health.module';
 import { MetricsModule } from './metrics/metrics.module';
 import { AdminModule } from './admin/admin.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { JobsModule } from './jobs/jobs.module';
+import { StorageModule } from './storage/storage.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([{
       ttl: 60000,
       limit: 100, // Strict: max 100 requests per minute per IP
@@ -48,6 +53,9 @@ import { AdminModule } from './admin/admin.module';
     HealthModule,
     MetricsModule,
     AdminModule,
+    JobsModule,
+    StorageModule,
+    MonitoringModule,
   ],
   controllers: [AppController, SeedController],
   providers: [

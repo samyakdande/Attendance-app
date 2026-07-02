@@ -4,11 +4,11 @@ export declare class NotificationsService {
     constructor(prisma: PrismaService);
     findAllForUser(institutionId: string, userId: string, search?: string): Promise<{
         id: string;
-        institutionId: string;
         createdAt: Date;
-        type: string;
+        institutionId: string;
         entityType: string | null;
         entityId: string | null;
+        type: string;
         title: string;
         message: string;
         isRead: boolean;
@@ -26,11 +26,11 @@ export declare class NotificationsService {
         entityType?: string;
     }): Promise<{
         id: string;
-        institutionId: string;
         createdAt: Date;
-        type: string;
+        institutionId: string;
         entityType: string | null;
         entityId: string | null;
+        type: string;
         title: string;
         message: string;
         isRead: boolean;

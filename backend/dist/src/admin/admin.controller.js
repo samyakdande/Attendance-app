@@ -27,6 +27,20 @@ let AdminController = class AdminController {
     getDashboardStats(user) {
         return this.adminService.getDashboardStats(user.institutionId);
     }
+    async exportQrPdf(user, classId, section, studentIds) {
+        try {
+            const selectedIds = studentIds ? studentIds.split(',') : undefined;
+            const url = await this.adminService.generateQrExportPdf(user.institutionId, {
+                classId,
+                section,
+                selectedStudentIds: selectedIds
+            });
+            return { url };
+        }
+        catch (err) {
+            throw new common_1.HttpException('Failed to generate PDF', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -37,6 +51,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "getDashboardStats", null);
+__decorate([
+    (0, common_1.Get)('qr/export'),
+    (0, roles_decorator_1.Roles)('admin'),
+    __param(0, (0, user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('classId')),
+    __param(2, (0, common_1.Query)('section')),
+    __param(3, (0, common_1.Query)('studentIds')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "exportQrPdf", null);
 exports.AdminController = AdminController = __decorate([
     (0, common_1.Controller)('api/v1/admin'),
     (0, common_1.UseGuards)(auth_guard_1.SupabaseAuthGuard, roles_guard_1.RolesGuard),

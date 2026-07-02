@@ -52,6 +52,7 @@ model Profile {
   requestedCorrections AttendanceCorrection[] @relation("CorrectionRequestedBy")
   approvedCorrections  AttendanceCorrection[] @relation("CorrectionApprovedBy")
 
+  @@index([institutionId, firstName, lastName])
   @@map("profiles")
 }
 
@@ -68,6 +69,9 @@ model Teacher {
   classes       Class[]
   sessions      AttendanceSession[]
 
+  @@index([profileId])
+  @@index([department])
+  @@index([status])
   @@map("teachers")
 }
 
@@ -114,6 +118,8 @@ model Student {
 
   @@unique([institutionId, enrollmentNumber])
   @@index([qrIdentifier])
+  @@index([institutionId, status])
+  @@index([institutionId, firstName, lastName])
   @@map("students")
 }
 
@@ -178,6 +184,8 @@ model Class {
   students       ClassStudent[]
   sessions       AttendanceSession[]
 
+  @@index([institutionId, academicYear])
+  @@index([institutionId, name])
   @@map("classes")
 }
 
@@ -284,6 +292,8 @@ model AuditLog {
 
   institution   Institution @relation(fields: [institutionId], references: [id])
 
+  @@index([institutionId, createdAt])
+  @@index([entityType, createdAt])
   @@map("audit_logs")
 }
 

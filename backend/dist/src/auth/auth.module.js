@@ -10,14 +10,19 @@ exports.AuthModule = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const supabase_strategy_1 = require("./supabase.strategy");
+const auth_controller_1 = require("./auth.controller");
+const auth_service_1 = require("./auth.service");
+const prisma_module_1 = require("../prisma/prisma.module");
+const config_1 = require("@nestjs/config");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
-        imports: [passport_1.PassportModule],
-        providers: [supabase_strategy_1.SupabaseStrategy],
-        exports: [supabase_strategy_1.SupabaseStrategy, passport_1.PassportModule],
+        imports: [passport_1.PassportModule, prisma_module_1.PrismaModule, config_1.ConfigModule],
+        controllers: [auth_controller_1.AuthController],
+        providers: [supabase_strategy_1.SupabaseStrategy, auth_service_1.AuthService],
+        exports: [supabase_strategy_1.SupabaseStrategy, passport_1.PassportModule, auth_service_1.AuthService],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

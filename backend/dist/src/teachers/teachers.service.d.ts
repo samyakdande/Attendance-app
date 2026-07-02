@@ -1,4 +1,5 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, PaginatedResult } from '../common/interfaces/pagination.interface';
 export declare class TeachersService {
     private prisma;
     constructor(prisma: PrismaService);
@@ -11,81 +12,35 @@ export declare class TeachersService {
     }): Promise<{
         profile: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         };
     } & {
         id: string;
-        department: string | null;
         status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         profileId: string;
+        department: string | null;
     }>;
-    findAll(institutionId: string): Promise<({
-        profile: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phone: string | null;
-            institutionId: string;
-        };
-        classes: ({
-            _count: {
-                students: number;
-            };
-        } & {
-            academicYear: string;
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            institutionId: string;
-            name: string;
-            academicYearId: string | null;
-            teacherId: string | null;
-        })[];
-    } & {
-        id: string;
-        department: string | null;
-        status: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        profileId: string;
-    })[]>;
+    findAll(institutionId: string, params?: PaginationParams & {
+        department?: string;
+        status?: string;
+    }): Promise<PaginatedResult<any>>;
     findOne(institutionId: string, id: string): Promise<{
-        profile: {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
-            firstName: string;
-            lastName: string;
-            email: string;
-            phone: string | null;
-            institutionId: string;
-        };
         classes: ({
             _count: {
                 students: number;
             };
         } & {
-            academicYear: string;
             id: string;
             createdAt: Date;
             updatedAt: Date;
@@ -93,11 +48,23 @@ export declare class TeachersService {
             institutionId: string;
             name: string;
             academicYearId: string | null;
+            academicYear: string;
             teacherId: string | null;
         })[];
+        profile: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            email: string;
+            phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
+            institutionId: string;
+            role: string;
+        };
         sessions: ({
             class: {
-                academicYear: string;
                 id: string;
                 createdAt: Date;
                 updatedAt: Date;
@@ -105,6 +72,7 @@ export declare class TeachersService {
                 institutionId: string;
                 name: string;
                 academicYearId: string | null;
+                academicYear: string;
                 teacherId: string | null;
             };
         } & {
@@ -114,20 +82,20 @@ export declare class TeachersService {
             updatedAt: Date;
             deletedAt: Date | null;
             institutionId: string;
+            classId: string;
             academicYearId: string | null;
             teacherId: string;
             startTime: Date;
-            classId: string;
             endTime: Date | null;
         })[];
     } & {
         id: string;
-        department: string | null;
         status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         profileId: string;
+        department: string | null;
     }>;
     update(institutionId: string, id: string, data: {
         firstName?: string;
@@ -138,27 +106,26 @@ export declare class TeachersService {
     }): Promise<{
         profile: {
             id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            role: string;
             firstName: string;
             lastName: string;
             email: string;
             phone: string | null;
+            createdAt: Date;
+            updatedAt: Date;
+            deletedAt: Date | null;
             institutionId: string;
+            role: string;
         };
     } & {
         id: string;
-        department: string | null;
         status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         profileId: string;
+        department: string | null;
     }>;
     assignClass(institutionId: string, id: string, classId: string): Promise<{
-        academicYear: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -166,10 +133,10 @@ export declare class TeachersService {
         institutionId: string;
         name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
     removeClass(institutionId: string, id: string, classId: string): Promise<{
-        academicYear: string;
         id: string;
         createdAt: Date;
         updatedAt: Date;
@@ -177,6 +144,7 @@ export declare class TeachersService {
         institutionId: string;
         name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
     getDashboardStats(institutionId: string, profileId: string): Promise<{
@@ -206,11 +174,11 @@ export declare class TeachersService {
     }>;
     remove(institutionId: string, id: string): Promise<{
         id: string;
-        department: string | null;
         status: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         profileId: string;
+        department: string | null;
     }>;
 }

@@ -8,92 +8,56 @@ export declare class ClassesController {
         teacherId?: string;
     }): Promise<{
         id: string;
-        academicYear: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
-    findAll(user: any): Promise<({
-        teacher: ({
-            profile: {
-                id: string;
-                createdAt: Date;
-                updatedAt: Date;
-                deletedAt: Date | null;
-                institutionId: string;
-                role: string;
-                firstName: string;
-                lastName: string;
-                email: string;
-                phone: string | null;
-            };
-        } & {
-            id: string;
-            createdAt: Date;
-            updatedAt: Date;
-            deletedAt: Date | null;
-            profileId: string;
-            department: string | null;
-            status: string;
-        }) | null;
-        _count: {
-            students: number;
-        };
-    } & {
-        id: string;
-        academicYear: string;
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        deletedAt: Date | null;
-        institutionId: string;
-        academicYearId: string | null;
-        teacherId: string | null;
-    })[]>;
+    findAll(user: any, page?: number, limit?: number, search?: string, academicYear?: string): Promise<import("../common/interfaces/pagination.interface").PaginatedResult<any>>;
     findOne(user: any, id: string): Promise<{
         teacher: ({
             profile: {
                 id: string;
+                firstName: string;
+                lastName: string;
+                email: string;
+                phone: string | null;
                 createdAt: Date;
                 updatedAt: Date;
                 deletedAt: Date | null;
                 institutionId: string;
                 role: string;
-                firstName: string;
-                lastName: string;
-                email: string;
-                phone: string | null;
             };
         } & {
             id: string;
+            status: string;
             createdAt: Date;
             updatedAt: Date;
             deletedAt: Date | null;
             profileId: string;
             department: string | null;
-            status: string;
         }) | null;
         students: ({
             student: {
                 id: string;
+                firstName: string;
+                lastName: string;
+                enrollmentNumber: string;
+                email: string | null;
+                phone: string | null;
+                qrIdentifier: string;
+                status: string;
+                qrStatus: string;
+                qrVersion: number;
+                lastQrGeneratedAt: Date | null;
                 createdAt: Date;
                 updatedAt: Date;
                 deletedAt: Date | null;
                 institutionId: string;
-                status: string;
-                firstName: string;
-                lastName: string;
-                email: string | null;
-                phone: string | null;
-                enrollmentNumber: string;
-                qrIdentifier: string;
-                qrStatus: string;
-                qrVersion: number;
-                lastQrGeneratedAt: Date | null;
             };
         } & {
             createdAt: Date;
@@ -102,13 +66,13 @@ export declare class ClassesController {
         })[];
     } & {
         id: string;
-        academicYear: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
     update(user: any, id: string, updateClassDto: {
@@ -117,24 +81,24 @@ export declare class ClassesController {
         teacherId?: string;
     }): Promise<{
         id: string;
-        academicYear: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
     remove(user: any, id: string): Promise<{
         id: string;
-        academicYear: string;
-        name: string;
         createdAt: Date;
         updatedAt: Date;
         deletedAt: Date | null;
         institutionId: string;
+        name: string;
         academicYearId: string | null;
+        academicYear: string;
         teacherId: string | null;
     }>;
     addStudentsToClass(user: any, id: string, body: {

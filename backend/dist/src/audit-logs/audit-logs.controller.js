@@ -24,8 +24,10 @@ let AuditLogsController = class AuditLogsController {
     constructor(auditLogsService) {
         this.auditLogsService = auditLogsService;
     }
-    findAll(user, entityType, action, days, search) {
+    findAll(user, page, limit, entityType, action, days, search) {
         return this.auditLogsService.findAll(user.institutionId, {
+            page,
+            limit,
             entityType,
             action,
             days: days ? parseInt(days, 10) : undefined,
@@ -38,12 +40,14 @@ __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)('admin'),
     __param(0, (0, user_decorator_1.CurrentUser)()),
-    __param(1, (0, common_1.Query)('entityType')),
-    __param(2, (0, common_1.Query)('action')),
-    __param(3, (0, common_1.Query)('days')),
-    __param(4, (0, common_1.Query)('search')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __param(3, (0, common_1.Query)('entityType')),
+    __param(4, (0, common_1.Query)('action')),
+    __param(5, (0, common_1.Query)('days')),
+    __param(6, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String, String, String, String]),
+    __metadata("design:paramtypes", [Object, Number, Number, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], AuditLogsController.prototype, "findAll", null);
 exports.AuditLogsController = AuditLogsController = __decorate([

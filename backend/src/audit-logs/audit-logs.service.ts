@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { PaginationParams, getPaginationOptions, PaginatedResult } from '../common/interfaces/pagination.interface';
 
 @Injectable()
 export class AuditLogsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(institutionId: string, filters?: { entityType?: string; action?: string; days?: number; search?: string }) {
+  async findAll(institutionId: string, filters?: PaginationParams & { entityType?: string; action?: string; days?: number; search?: string }): Promise<PaginatedResult<any>> {
+    const { page, limit, skip } = getPaginationOptions(filters || {});
+    
     const whereClause: any = { institutionId };
 
     if (filters?.entityType) {
@@ -22,7 +25,6 @@ export class AuditLogsService {
       whereClause.createdAt = { gte: date };
     }
 
-    // search could be against action or entityId, but since it's an audit log, maybe search action
     if (filters?.search) {
       whereClause.OR = [
         { action: { contains: filters.search, mode: 'insensitive' } },
@@ -30,11 +32,29 @@ export class AuditLogsService {
       ];
     }
 
-    return this.prisma.auditLog.findMany({
-      where: whereClause,
-      orderBy: { createdAt: 'desc' },
-      take: 200, // increased for better filtering
-    });
+    const [total, data] = await this.prisma.$transaction([
+      this.prisma.auditLog.count({ where: whereClause }),
+      this.prisma.auditLog.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      })
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrevious: page > 1
+      }
+    };
   }
 
   async createLog(data: {
