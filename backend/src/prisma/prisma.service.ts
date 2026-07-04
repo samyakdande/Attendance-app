@@ -13,7 +13,9 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     
     // The node-postgres Pool handles the connection to PgBouncer natively.
     // However, it does NOT understand the '?pgbouncer=true' flag, which hangs the socket.
-    const cleanUrl = rawUrl.replace('?pgbouncer=true', '').replace('&pgbouncer=true', '');
+    const url = new URL(rawUrl);
+    url.searchParams.delete('pgbouncer');
+    const cleanUrl = url.toString();
     
     const pool = new Pool({ connectionString: cleanUrl });
     const adapter = new PrismaPg(pool);

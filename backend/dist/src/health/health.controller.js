@@ -8,9 +8,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HealthController = void 0;
 const common_1 = require("@nestjs/common");
@@ -32,42 +29,49 @@ let HealthController = class HealthController {
             version: this.version
         };
     }
-    async checkAll(res) {
+    async checkAll() {
         const dbHealth = await this.checkDatabaseStatus();
         const redisHealth = await this.checkRedisStatus();
         let overallStatus = 'healthy';
-        let statusCode = common_1.HttpStatus.OK;
         if (dbHealth === 'down') {
             overallStatus = 'down';
-            statusCode = common_1.HttpStatus.SERVICE_UNAVAILABLE;
+            throw new common_1.HttpException({
+                status: overallStatus,
+                timestamp: new Date().toISOString(),
+                version: this.version,
+                services: { database: dbHealth, redis: redisHealth }
+            }, common_1.HttpStatus.SERVICE_UNAVAILABLE);
         }
         else if (redisHealth !== 'healthy') {
             overallStatus = 'degraded';
         }
-        return res.status(statusCode).json({
+        return {
             status: overallStatus,
             timestamp: new Date().toISOString(),
             version: this.version,
-            services: {
-                database: dbHealth,
-                redis: redisHealth
-            }
-        });
+            services: { database: dbHealth, redis: redisHealth }
+        };
     }
-    async checkDatabase(res) {
+    async checkDatabase() {
         const status = await this.checkDatabaseStatus();
-        const statusCode = status === 'healthy' ? common_1.HttpStatus.OK : common_1.HttpStatus.SERVICE_UNAVAILABLE;
-        return res.status(statusCode).json(this.formatResponse('database', status));
+        if (status === 'down') {
+            throw new common_1.HttpException(this.formatResponse('database', status), common_1.HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        return this.formatResponse('database', status);
     }
-    async checkRedis(res) {
+    async checkRedis() {
         const status = await this.checkRedisStatus();
-        const statusCode = status === 'down' ? common_1.HttpStatus.SERVICE_UNAVAILABLE : common_1.HttpStatus.OK;
-        return res.status(statusCode).json(this.formatResponse('redis', status));
+        if (status === 'down') {
+            throw new common_1.HttpException(this.formatResponse('redis', status), common_1.HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        return this.formatResponse('redis', status);
     }
-    async checkSupabase(res) {
+    async checkSupabase() {
         const status = await this.checkDatabaseStatus();
-        const statusCode = status === 'healthy' ? common_1.HttpStatus.OK : common_1.HttpStatus.SERVICE_UNAVAILABLE;
-        return res.status(statusCode).json(this.formatResponse('supabase', status));
+        if (status === 'down') {
+            throw new common_1.HttpException(this.formatResponse('supabase', status), common_1.HttpStatus.SERVICE_UNAVAILABLE);
+        }
+        return this.formatResponse('supabase', status);
     }
     getVersion() {
         return {
@@ -82,6 +86,7 @@ let HealthController = class HealthController {
             return 'healthy';
         }
         catch (error) {
+            console.error("PRISMA CONNECTION ERROR DETAILS:", error);
             return 'down';
         }
     }
@@ -101,30 +106,26 @@ let HealthController = class HealthController {
 exports.HealthController = HealthController;
 __decorate([
     (0, common_1.Get)(),
-    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], HealthController.prototype, "checkAll", null);
 __decorate([
     (0, common_1.Get)('database'),
-    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], HealthController.prototype, "checkDatabase", null);
 __decorate([
     (0, common_1.Get)('redis'),
-    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], HealthController.prototype, "checkRedis", null);
 __decorate([
     (0, common_1.Get)('supabase'),
-    __param(0, (0, common_1.Res)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], HealthController.prototype, "checkSupabase", null);
 __decorate([

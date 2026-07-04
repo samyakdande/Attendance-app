@@ -61,6 +61,21 @@ Built the `ReportsModule` to handle administrative data extraction:
 - **`GET /api/v1/reports/student/:id`**: Provides an individual student's attendance history and overall attendance rate.
 - **`GET /api/v1/reports/export`**: Compiles an enormous denormalized JSON object intended for direct CSV conversion. It joins `institutions`, `classes`, `teachers`, `sessions`, and `records` into a flat timeline suitable for government or board reporting.
 
+#### **4. Deep-Dive: Resolving the Supavisor Prisma Bug**
+During backend stabilization, we uncovered two critical bugs that prevented Prisma from connecting to the Supabase PostgreSQL instance during an ongoing Supabase regional outage:
+1.  **The Hidden String Parsing Bug (`prisma.service.ts`):** 
+    *   The `PrismaPgAdapter` doesn't natively support Prisma's `?pgbouncer=true` flag. The backend had a brittle `rawUrl.replace('?pgbouncer=true', '')` string manipulation hack.
+    *   When we added critical `&connection_limit=1&connect_timeout=30` flags to fight the regional outage, the `.replace()` hack deleted the `?` character, fusing the database name with the query parameters (resulting in the bizarre error: `database "postgres&connection_limit=1" does not exist`). 
+    *   **Fix:** Refactored `prisma.service.ts` to use the native NodeJS `URL` object, safely deleting the `pgbouncer` param via `searchParams.delete()` without destroying the rest of the connection string.
+2.  **The Incorrect Pooler Node:** 
+    *   We initially attempted to route traffic through `aws-0` (the modern standard for Supavisor). 
+    *   This resulted in a `(ENOTFOUND) tenant/user not found` error because the specific project's routing tables were exclusively provisioned on the legacy `aws-1` node. 
+    *   **Fix:** Reverted the `.env` configuration to use the explicit `aws-1` connection string provided by the Supabase dashboard, while retaining the increased timeouts and connection limits.
+
+#### **5. Final Verification**
+*   The `/api/v1/health/database` endpoint now successfully returns a 200 OK `{"status":"ok","database":"connected"}` response.
+*   The Android frontend is now fully capable of piercing the host firewall (`192.168.1.6`) and communicating with the stable, database-connected NestJS backend!
+
 ---
 
 ## Phase 8: Production Hardening (Completed)
@@ -97,6 +112,11 @@ We have officially escalated the platform from a functional MVP to a highly-avai
 - Built an automated PDF compiler using `pdfkit` and `qrcode` to dynamically compile the 120 students into a scannable, printable grid document (`qr-test-pack.pdf`), guaranteeing easy identification during rapid field testing.
 
 ### 2. Offline Edge Node Transition
+- **Environment:** Development (Preview Profile).
+- **Backend Prisma Connection:** `aws-1-ap-southeast-2.pooler.supabase.com:6543` (Transaction Mode Supavisor).
+
+#### **3. Existing Blockers & Pending Actions**
+*   ~~CRITICAL BLOCKER: The NestJS backend is failing to start due to persistent `PrismaClient` initialization errors.~~ **(RESOLVED)**
 - Encountered strict ISP firewall blocks preventing the local NestJS backend from communicating with the cloud Supabase instance on port 5432.
 - **Solution:** Successfully refactored the NestJS `AttendanceService` into a fully standalone **Offline Edge Node**. 
 - The backend now completely bypasses the blocked PostgreSQL connection by instantly loading all 120 valid QR codes directly from the local JSON file straight into the local ultra-fast Redis memory cache.

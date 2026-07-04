@@ -20,7 +20,9 @@ let PrismaService = class PrismaService extends client_1.PrismaClient {
         if (!rawUrl) {
             throw new Error('DATABASE_URL is required for Prisma.');
         }
-        const cleanUrl = rawUrl.replace('?pgbouncer=true', '').replace('&pgbouncer=true', '');
+        const url = new URL(rawUrl);
+        url.searchParams.delete('pgbouncer');
+        const cleanUrl = url.toString();
         const pool = new pg_1.Pool({ connectionString: cleanUrl });
         const adapter = new adapter_pg_1.PrismaPg(pool);
         super({ adapter });

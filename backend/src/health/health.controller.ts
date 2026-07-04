@@ -1,4 +1,4 @@
-import { Controller, Get, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, HttpException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import type { Response } from 'express';
@@ -22,52 +22,57 @@ export class HealthController {
   }
 
   @Get()
-  async checkAll(@Res() res: Response) {
+  async checkAll() {
     const dbHealth = await this.checkDatabaseStatus();
     const redisHealth = await this.checkRedisStatus();
     
-    // Overall status logic
     let overallStatus: 'healthy' | 'degraded' | 'down' = 'healthy';
-    let statusCode = HttpStatus.OK;
-
+    
     if (dbHealth === 'down') {
       overallStatus = 'down';
-      statusCode = HttpStatus.SERVICE_UNAVAILABLE;
+      throw new HttpException({
+        status: overallStatus,
+        timestamp: new Date().toISOString(),
+        version: this.version,
+        services: { database: dbHealth, redis: redisHealth }
+      }, HttpStatus.SERVICE_UNAVAILABLE);
     } else if (redisHealth !== 'healthy') {
       overallStatus = 'degraded';
     }
 
-    return res.status(statusCode).json({
+    return {
       status: overallStatus,
       timestamp: new Date().toISOString(),
       version: this.version,
-      services: {
-        database: dbHealth,
-        redis: redisHealth
-      }
-    });
+      services: { database: dbHealth, redis: redisHealth }
+    };
   }
 
   @Get('database')
-  async checkDatabase(@Res() res: Response) {
+  async checkDatabase() {
     const status = await this.checkDatabaseStatus();
-    const statusCode = status === 'healthy' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-    return res.status(statusCode).json(this.formatResponse('database', status));
+    if (status === 'down') {
+      throw new HttpException(this.formatResponse('database', status), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    return this.formatResponse('database', status);
   }
 
   @Get('redis')
-  async checkRedis(@Res() res: Response) {
+  async checkRedis() {
     const status = await this.checkRedisStatus();
-    const statusCode = status === 'down' ? HttpStatus.SERVICE_UNAVAILABLE : HttpStatus.OK;
-    return res.status(statusCode).json(this.formatResponse('redis', status));
+    if (status === 'down') {
+      throw new HttpException(this.formatResponse('redis', status), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    return this.formatResponse('redis', status);
   }
 
   @Get('supabase')
-  async checkSupabase(@Res() res: Response) {
-    // Supabase encompasses Auth, DB, and Storage. We'll check DB as a proxy for the project.
+  async checkSupabase() {
     const status = await this.checkDatabaseStatus();
-    const statusCode = status === 'healthy' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-    return res.status(statusCode).json(this.formatResponse('supabase', status));
+    if (status === 'down') {
+      throw new HttpException(this.formatResponse('supabase', status), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    return this.formatResponse('supabase', status);
   }
 
   @Get('version')
@@ -84,6 +89,7 @@ export class HealthController {
       await this.prisma.$queryRaw`SELECT 1`;
       return 'healthy';
     } catch (error) {
+      console.error("PRISMA CONNECTION ERROR DETAILS:", error);
       return 'down';
     }
   }

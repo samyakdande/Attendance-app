@@ -1,0 +1,72 @@
+================================================================
+CAMPUSFLOW ERP - PROJECT PROPOSAL & PAYMENT SCHEDULE
+================================================================
+Total Project Cost: ₹1,00,000 (One Lakh INR)
+Estimated Timeline: [Insert Weeks, e.g., 6-8 Weeks]
+
+1. PAYMENT MILESTONES
+To ensure a smooth development process and risk-free delivery, the payment of ₹1,00,000 is divided into four milestones:
+
+Milestone 1: Project Kickoff & Architecture Setup (30%)
+Amount: ₹30,000
+Deliverables: 
+- Signing of the agreement/approval.
+- Provisioning of cloud servers (Supabase, Redis, Cloud Hosting).
+- Finalizing the database schema and system architecture.
+
+Milestone 2: Core Platform & Frontend Delivery (30%)
+Amount: ₹30,000
+Deliverables:
+- Completion of the React Native mobile app UI (Teacher & Admin dashboards).
+- Functional User Authentication (Role-Based Access for Teachers & Admins).
+- Delivery of an APK/Expo link for client review.
+
+Milestone 3: Advanced Features & Offline Engineering (25%)
+Amount: ₹25,000
+Deliverables:
+- Implementation of the QR Code scanning engine.
+- Offline-first fallback queue (Redis) to ensure attendance works without internet.
+- Automated PDF generation for bulk student QR codes.
+
+Milestone 4: Final Deployment & Handoff (15%)
+Amount: ₹15,000
+Deliverables:
+- Final bug fixing and performance polishing.
+- Deployment of the NestJS backend to a production cloud server (e.g., Render/AWS).
+- Handoff of the final production APK.
+
+================================================================
+2. SCOPE OF WORK (What is included in the ₹1 Lakh)
+================================================================
+- Mobile App (Android) built on React Native.
+- Teacher Dashboard: Live attendance stats, session management, and notifications.
+- Admin Capabilities: Managing teachers, students, and classes.
+- QR Attendance System: Fast scanning with offline network resilience.
+- Backend: Custom NestJS secure API.
+- Database: Supabase PostgreSQL with automated backups.
+
+================================================================
+3. OUT OF SCOPE (Requires additional budget)
+================================================================
+- iOS (Apple App Store) deployment (requires Apple Developer Account and Mac compilation).
+- Parent Portals or Student-facing apps (this is an Admin/Teacher ERP).
+- Complex custom integrations with legacy school hardware (e.g., biometric thumbprint scanners).
+
+================================================================
+4. RECURRING MONTHLY CLOUD COSTS (Variable based on usage)
+================================================================
+The ₹1,00,000 fee covers the one-time software development and engineering labor. It DOES NOT cover the monthly cloud infrastructure required to keep the app online (Database storage, Redis cache, Server hosting).
+
+As the school adds more students, teachers, and attendance records, the storage and server usage will increase. You must choose how to handle these monthly bills:
+
+Option A: Client Direct Billing (Recommended for Transparency)
+You (the client) will create your own accounts on Supabase (Database), Upstash (Redis), and Render/AWS (Hosting) using your credit card. 
+- The software will be handed over to your accounts.
+- You will pay the cloud providers directly for exactly what you use.
+- Estimated starting cost: ~$0 to $25/month (depending on initial user load).
+
+Option B: Managed Hosting by Developer (Retainer + Infrastructure)
+If you prefer not to manage cloud accounts, I will host the platform on my infrastructure.
+- Base Maintenance Fee: ₹5,000 per month (covers my time for monitoring, backups, and minor bug fixes).
+- Infrastructure Pass-Through: You will be billed additionally for the exact cloud costs incurred that month (e.g., if Supabase charges ₹2,000 for storage, that is added to the ₹5,000 base fee).
+- Total Monthly Cost: ₹5,000 + Actual Cloud Usage.
